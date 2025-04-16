@@ -24,8 +24,9 @@ df = load_data()
 item_input = st.text_input("Enter Item Number:")
 
 # Search result
+# Search result
 if item_input:
-    result = df[df['Item'].astype(str).str.strip() == item_input.strip()]
+    result = df[df['Item No'].astype(str).str.strip().str.lower() == item_input.strip().lower()]
     
     if not result.empty:
         st.success("Item found!")
@@ -33,3 +34,4 @@ if item_input:
         st.write("**Item Qty:**", result.iloc[0]['Item Qty'])
     else:
         st.warning("Item not found.")
+
