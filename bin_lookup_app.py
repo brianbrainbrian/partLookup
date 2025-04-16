@@ -1,17 +1,18 @@
 import streamlit as st
 import pandas as pd
 
-# Set page config
+# Page config
 st.set_page_config(page_title="Bin Lookup", layout="centered")
 
 # Title
 st.title("🔍 Bin Lookup")
 
-# Load the Excel file
+# Load Excel file
 @st.cache_data
 def load_data():
     try:
         df = pd.read_excel("book1.xlsx")
+        df.columns = df.columns.str.strip()  # clean up column names
         return df
     except Exception as e:
         st.error(f"Error loading file: {e}")
@@ -19,17 +20,16 @@ def load_data():
 
 df = load_data()
 
-# Search bar
+# Search input
 item_input = st.text_input("Enter Item Number:")
 
-# Lookup logic
+# Search result
 if item_input:
     result = df[df['Item'].astype(str).str.strip() == item_input.strip()]
-
+    
     if not result.empty:
         st.success("Item found!")
-        st.write("**Bin Location:**", result.iloc[0]['binlocation'])
-        st.write("**Description:**", result.iloc[0]['description'])
-        st.write("**Quantity:**", result.iloc[0]['quantity'])
+        st.write("**Bin Location Description:**", result.iloc[0]['Bin Location Description'])
+        st.write("**Item Qty:**", result.iloc[0]['Item Qty'])
     else:
-        st.warning("Item not found. Please check the Item Number.")
+        st.warning("Item not found.")
