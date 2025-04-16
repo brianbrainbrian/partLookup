@@ -42,6 +42,10 @@ matches = df[df['Item'].astype(str).str.strip().str.lower() == selected_item.str
 
 if not matches.empty:
     st.success(f"Found {len(matches)} matching bin(s):")
-    st.dataframe(matches[['Bin Location Description', 'Item Qty']].reset_index(drop=True))
+    st.dataframe(
+    matches[['Bin Location Description', 'Item Qty']],
+    use_container_width=True,
+    hide_index=True
+)
 else:
     st.warning("Item not found.")
