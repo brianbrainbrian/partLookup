@@ -20,15 +20,23 @@ def load_data():
 
 df = load_data()
 
-# Search input
-item_input = st.text_input("Enter Item Number:")
+# Check if required column exists
+if "Item" not in df.columns:
+    st.error("The Excel file must contain a column named 'Item'.")
+    st.stop()
 
-# Search and display results
-if item_input:
-    matches = df[df['Item'].astype(str).str.strip().str.lower() == item_input.strip().lower()]
+# Get list of unique items (sorted)
+item_list = sorted(df['Item'].astype(str).str.strip().unique())
+
+# User selection from dropdown
+selected_item = st.selectbox("Select Item Number:", options=item_list)
+
+# Show results
+if selected_item:
+    matches = df[df['Item'].astype(str).str.strip().str.lower() == selected_item.strip().lower()]
     
     if not matches.empty:
-        st.success(f"Found {len(matches)} matching item(s):")
+        st.success(f"Found {len(matches)} matching bin(s):")
         st.dataframe(matches[['Bin Location Description', 'Item Qty']].reset_index(drop=True))
     else:
         st.warning("Item not found.")
