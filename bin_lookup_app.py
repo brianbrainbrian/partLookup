@@ -12,7 +12,7 @@ st.title("🔍 Bin Lookup")
 def load_data():
     try:
         df = pd.read_excel("book1.xlsx")
-        df.columns = df.columns.str.strip()  # clean up column names
+        df.columns = df.columns.str.strip()  # Clean column names
         return df
     except Exception as e:
         st.error(f"Error loading file: {e}")
@@ -23,15 +23,12 @@ df = load_data()
 # Search input
 item_input = st.text_input("Enter Item Number:")
 
-# Search result
-# Search result
+# Search and display results
 if item_input:
-    result = df[df['Item'].astype(str).str.strip().str.lower() == item_input.strip().lower()]
+    matches = df[df['Item'].astype(str).str.strip().str.lower() == item_input.strip().lower()]
     
-    if not result.empty:
-        st.success("Item found!")
-        st.write("**Bin Location Description:**", result.iloc[0]['Bin Location Description'])
-        st.write("**Item Qty:**", result.iloc[0]['Item Qty'])
+    if not matches.empty:
+        st.success(f"Found {len(matches)} matching item(s):")
+        st.dataframe(matches[['Bin Location Description', 'Item Qty']].reset_index(drop=True))
     else:
         st.warning("Item not found.")
-
