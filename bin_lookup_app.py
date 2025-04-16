@@ -12,7 +12,7 @@ st.title("🔍 Bin Lookup")
 def load_data():
     try:
         df = pd.read_excel("book1.xlsx")
-        df.columns = df.columns.str.strip()  # Clean column names
+        df.columns = df.columns.str.strip()
         return df
     except Exception as e:
         st.error(f"Error loading file: {e}")
@@ -20,23 +20,28 @@ def load_data():
 
 df = load_data()
 
-# Check if required column exists
-if "Item" not in df.columns:
-    st.error("The Excel file must contain a column named 'Item'.")
+# Check for required columns
+required_columns = ["Item", "Item Description", "Bin Location Description", "Item Qty"]
+missing_cols = [col for col in required_columns if col not in df.columns]
+if missing_cols:
+    st.error(f"Missing columns in Excel: {', '.join(missing_cols)}")
     st.stop()
 
-# Get list of unique items (sorted)
-item_list = sorted(df['Item'].astype(str).str.strip().unique())
+# Build dropdown options: "Item - Item Description"
+df['search_label'] = df['Item'].astype(str).str.strip() + " - " + df['Item Description'].astype(str).str.strip()
+search_map = dict(zip(df['search_label'], df['Item']))
 
-# User selection from dropdown
-selected_item = st.selectbox("Select Item Number:", options=item_list)
+# User selects from dropdown
+selected_label = st.selectbox("Select Item:", options=sorted(search_map.keys()))
 
-# Show results
-if selected_item:
-    matches = df[df['Item'].astype(str).str.strip().str.lower() == selected_item.strip().lower()]
-    
-    if not matches.empty:
-        st.success(f"Found {len(matches)} matching bin(s):")
-        st.dataframe(matches[['Bin Location Description', 'Item Qty']].reset_index(drop=True))
-    else:
-        st.warning("Item not found.")
+# Get actual Item from label
+selected_item = search_map[selected_label]
+
+# Filter and show results
+matches = df[df['Item'].astype(str).str.strip().str.lower() == selected_item.strip().lower()]
+
+if not matches.empty:
+    st.success(f"Found {len(matches)} matching bin(s):")
+    st.dataframe(matches[['Bin Location Description', 'Item Qty']].reset_index(drop=True))
+else:
+    st.warning("Item not found.")
