@@ -44,10 +44,8 @@ if not matches.empty:
     st.success(f"Found {len(matches)} matching bin(s):")
 
     # ✅ THIS is where you put the final clean table line
-    st.dataframe(
-        matches[['Bin Location Description', 'Item Qty']],
-        use_container_width=True,
-        hide_index=True
-    )
+st.table(
+    matches[['Bin Location Description', 'Item Qty']].reset_index(drop=True)
+)
 else:
     st.warning("Item not found.")
