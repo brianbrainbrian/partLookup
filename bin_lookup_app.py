@@ -31,25 +31,27 @@ if missing_cols:
 df['search_label'] = df['Item'].astype(str).str.strip() + " - " + df['Item Description'].astype(str).str.strip()
 search_map = dict(zip(df['search_label'], df['Item']))
 
-# --- Inline Select + Clear ---
+# Dropdown + Clear Button inline
 st.markdown("#### Select Item:")
 col1, col2 = st.columns([5, 1])
 
+options = [""] + sorted(search_map.keys())  # Include blank first entry for clear/reset
+
 with col1:
     selected_label = st.selectbox(
-        label="", 
-        options=[""] + sorted(search_map.keys()),
+        label="",
+        options=options,
         key="item_select",
         label_visibility="collapsed"
     )
 
 with col2:
-    st.markdown(" ")  # spacer to align button vertically
+    st.markdown(" ")  # visual spacer
     if st.button("Clear"):
-        st.session_state.item_select = ""
+        st.session_state["item_select"] = options[0]  # Reset to blank
         st.experimental_rerun()
 
-# --- Filter and Show Table ---
+# Only process if something is selected
 if selected_label:
     selected_item = search_map[selected_label]
 
@@ -58,10 +60,10 @@ if selected_label:
     if not matches.empty:
         st.success(f"Found {len(matches)} matching bin(s):")
 
-        # Sort and hide row numbers
+        # Sort by Bin Location Description and hide index
         table = matches[['Bin Location Description', 'Item Qty']].copy()
         table = table.sort_values(by='Bin Location Description')
-        table.index = [''] * len(table)
+        table.index = [''] * len(table)  # Hide index
 
         st.table(table)
     else:
