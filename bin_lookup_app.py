@@ -31,24 +31,31 @@ if missing_cols:
 df['search_label'] = df['Item'].astype(str).str.strip() + " - " + df['Item Description'].astype(str).str.strip()
 search_map = dict(zip(df['search_label'], df['Item']))
 
-# User selects from dropdown
-selected_label = st.selectbox("Select Item:", options=sorted(search_map.keys()))
+# Layout with dropdown + clear button side by side
+col1, col2 = st.columns([4, 1])
 
-# Get actual Item from label
-selected_item = search_map[selected_label]
+with col1:
+    selected_label = st.selectbox("Select Item:", options=[""] + sorted(search_map.keys()), key="item_select")
 
-# Filter and show results
-matches = df[df['Item'].astype(str).str.strip().str.lower() == selected_item.strip().lower()]
+with col2:
+    if st.button("Clear"):
+        st.session_state.item_select = ""  # reset dropdown selection
+        st.experimental_rerun()
 
-if not matches.empty:
-    st.success(f"Found {len(matches)} matching bin(s):")
+# Continue only if something is selected
+if selected_label:
+    selected_item = search_map[selected_label]
 
-    # ✅ Sort alphabetically and blank out index for clean table
-    table = matches[['Bin Location Description', 'Item Qty']].copy()
-    table = table.sort_values(by='Bin Location Description')
-    table.index = [''] * len(table)  # 🪄 Hide row numbers in st.table()
+    matches = df[df['Item'].astype(str).str.strip().str.lower() == selected_item.strip().lower()]
 
-    st.table(table)
+    if not matches.empty:
+        st.success(f"Found {len(matches)} matching bin(s):")
 
-else:
-    st.warning("Item not found.")
+        # Sort alphabetically and hide row numbers
+        table = matches[['Bin Location Description', 'Item Qty']].copy()
+        table = table.sort_values(by='Bin Location Description')
+        table.index = [''] * len(table)
+
+        st.table(table)
+    else:
+        st.warning("Item not found.")
