@@ -42,10 +42,9 @@ matches = df[df['Item'].astype(str).str.strip().str.lower() == selected_item.str
 
 if not matches.empty:
     st.success(f"Found {len(matches)} matching bin(s):")
-
-    # ✅ Table version – will always expand height, but index will be shown
     st.table(
-        matches[['Bin Location Description', 'Item Qty']]
-    )
+    matches[['Bin Location Description', 'Item Qty']].reset_index(drop=True)
+)
+
 else:
     st.warning("Item not found.")
