@@ -26,7 +26,7 @@ item_input = st.text_input("Enter Item Number:")
 # Search result
 # Search result
 if item_input:
-    result = df[df['Item No'].astype(str).str.strip().str.lower() == item_input.strip().lower()]
+    result = df[df['Item'].astype(str).str.strip().str.lower() == item_input.strip().lower()]
     
     if not result.empty:
         st.success("Item found!")
