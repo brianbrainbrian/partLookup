@@ -43,12 +43,11 @@ matches = df[df['Item'].astype(str).str.strip().str.lower() == selected_item.str
 if not matches.empty:
     st.success(f"Found {len(matches)} matching bin(s):")
 
-    # ✅ Sort by Bin Location Description and add row number
+    # ✅ Sort alphabetically, no row number column
     table = matches[['Bin Location Description', 'Item Qty']].copy()
     table = table.sort_values(by='Bin Location Description')
-    table.insert(0, "No.", range(1, len(table) + 1))
 
-    # ✅ Display clean, scroll-free table
+    # ✅ Display clean table without index
     st.table(table)
 
 else:
