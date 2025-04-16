@@ -24,7 +24,7 @@ item_input = st.text_input("Enter Item Number:")
 
 # Lookup logic
 if item_input:
-    result = df[df['Item No'].astype(str).str.strip() == item_input.strip()]
+    result = df[df['Item'].astype(str).str.strip() == item_input.strip()]
 
     if not result.empty:
         st.success("Item found!")
