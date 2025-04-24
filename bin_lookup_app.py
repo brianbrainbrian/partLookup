@@ -11,7 +11,7 @@ st.title("🔍 Bin Lookup")
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_excel("book1.xlsx")
+        df = pd.read_excel("apps/book1.xlsx")
         df.columns = df.columns.str.strip()
         return df
     except Exception as e:
